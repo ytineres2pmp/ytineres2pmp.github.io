@@ -1,0 +1,894 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>เพื่อนยื่นแก้วมา ทำไงดี</title>
+<meta name="description" content="เกมเลือกทางเดินเรื่องการดื่มและการเข้าสังคมของนักศึกษามหาวิทยาลัย">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=Mitr:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#1c1533;
+  --panel:#261d47;
+  --raised:#31265a;
+  --line:#4a3d7c;
+  --ink:#f5f0ff;
+  --dim:#bfb3e0;
+  --amber:#ffc46b;
+  --mint:#7fe9c3;
+  --orchid:#e6a0ff;
+  --sky:#93c9ff;
+  --coral:#ff8f7a;
+  --font-display:'Mitr','Leelawadee UI','Tahoma',sans-serif;
+  --font-body:'IBM Plex Sans Thai','Leelawadee UI','Tahoma',sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%;background:var(--bg)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:1.0625rem;line-height:1.85;min-height:100vh}
+[hidden]{display:none !important}
+button,input{font:inherit}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.shell{max-width:1120px;margin:0 auto;padding:22px 22px 72px}
+
+/* ---------- neon ---------- */
+.neon{
+  --neon:var(--amber);
+  font-family:var(--font-display);font-weight:500;line-height:1.4;letter-spacing:.02em;margin:0;
+  color:color-mix(in srgb,var(--neon) 28%,#fff);
+  text-shadow:
+    0 0 3px color-mix(in srgb,var(--neon) 55%,#fff),
+    0 0 10px var(--neon),
+    0 0 26px var(--neon),
+    0 0 60px color-mix(in srgb,var(--neon) 55%,transparent);
+}
+@keyframes flicker{0%,17%,22%,26%,52%,58%,100%{opacity:1}19%,24%,55%{opacity:.3}}
+.neon.boot{animation:flicker 1.7s 1}
+
+/* ---------- buttons & inputs ---------- */
+.btn{font-family:var(--font-display);font-size:1.05rem;border:0;border-radius:999px;padding:13px 32px;cursor:pointer;line-height:1.5;transition:box-shadow .2s,opacity .2s}
+.btn.primary{background:var(--amber);color:#2b1b06}
+.btn.primary:hover:not(:disabled){box-shadow:0 0 24px rgba(255,196,107,.55)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--dim);padding:6px 16px;font-size:.92rem}
+.btn.ghost:hover{border-color:var(--amber);color:var(--ink)}
+.btn.line{background:transparent;border:1.5px solid var(--line);color:var(--ink);padding:11px 26px}
+.btn.line:hover{border-color:var(--amber)}
+.btn:focus-visible,.choice:focus-visible,summary:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
+
+.text-in{width:100%;padding:12px 16px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-size:1.05rem}
+.text-in:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,196,107,.25)}
+.text-in::placeholder{color:#8d80b8}
+
+/* ---------- start ---------- */
+.start-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;min-height:calc(100vh - 90px)}
+.sign-frame{display:inline-block;padding:20px 34px 14px;border:2px solid var(--amber);border-radius:22px;
+  box-shadow:0 0 12px rgba(255,196,107,.7),0 0 34px rgba(255,196,107,.35),inset 0 0 14px rgba(255,196,107,.35);margin-bottom:28px}
+.start-title{font-size:clamp(2.4rem,6vw,4.4rem)}
+.lede{max-width:46ch;color:var(--dim);font-size:1.1rem;margin:0 0 14px}
+.fine{max-width:46ch;color:var(--dim);font-size:.92rem;margin:0}
+.setup{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:28px;display:grid;gap:22px}
+.setup h2{font-family:var(--font-display);font-weight:500;font-size:1.3rem;margin:0}
+.field{border:0;padding:0;margin:0;min-width:0}
+.field-label{display:block;font-family:var(--font-display);font-size:1rem;padding:0;margin:0 0 4px}
+.hint{display:block;font-size:.88rem;color:var(--dim);line-height:1.6;margin:0 0 10px}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.opt{position:relative;display:block}
+.opt input{position:absolute;inset:0;opacity:0;cursor:pointer;margin:0}
+.opt span{display:block;padding:8px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--bg);font-size:.98rem;line-height:1.6;transition:border-color .15s,background .15s,box-shadow .15s}
+.opt:hover span{border-color:var(--dim)}
+.opt input:checked + span{border-color:var(--amber);color:#fff1d6;background:rgba(255,196,107,.14);box-shadow:0 0 14px -4px var(--amber)}
+.opt input:focus-visible + span{outline:3px solid var(--sky);outline-offset:2px}
+
+/* ---------- game ---------- */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-family:var(--font-display);font-size:1.1rem;color:var(--amber);text-shadow:0 0 12px rgba(255,196,107,.6)}
+.track{height:4px;border-radius:99px;background:var(--line);margin-top:14px;overflow:hidden}
+.track-fill{height:100%;width:0;border-radius:99px;background:var(--amber);box-shadow:0 0 12px var(--amber);transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.layout{display:grid;grid-template-columns:270px 1fr;gap:36px;margin-top:26px;align-items:start}
+
+.hud{position:sticky;top:20px;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px}
+.hud-name{font-family:var(--font-display);font-size:1.1rem;margin:0 0 16px;line-height:1.5;word-break:break-word}
+#hud-stats{display:grid;gap:18px}
+.stat[data-stat="h"]{--sc:var(--mint)}
+.stat[data-stat="b"]{--sc:var(--orchid)}
+.stat[data-stat="m"]{--sc:var(--amber)}
+.stat[data-stat="c"]{--sc:var(--sky)}
+.stat-top{display:flex;justify-content:space-between;align-items:baseline;font-size:.95rem;line-height:1.6;margin-bottom:6px}
+.stat-val{font-variant-numeric:tabular-nums;color:var(--sc);font-family:var(--font-display)}
+.stat-val small{color:var(--dim);font-family:var(--font-body);font-size:.8rem;margin-left:6px}
+.tube{position:relative;height:12px;border-radius:99px;background:#20183d;border:1px solid var(--line)}
+.tube-fill{height:100%;width:0;border-radius:99px;background:var(--sc);
+  box-shadow:0 0 10px var(--sc),0 0 22px color-mix(in srgb,var(--sc) 50%,transparent);
+  transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.tube-mark{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);opacity:.8;border-radius:2px}
+
+.main{--mood:var(--amber);min-width:0}
+.stage{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center;padding:20px 28px;border-radius:22px;background:var(--panel);
+  border:1.5px solid var(--mood);box-shadow:0 0 26px -10px var(--mood),inset 0 0 30px -18px var(--mood)}
+.stage-art{font-size:2.7rem;line-height:1.25;letter-spacing:.08em}
+.stage-place{font-family:var(--font-display);font-weight:400;font-size:1.4rem;line-height:1.5;margin:0}
+.stage-where{margin:0;color:var(--dim);font-size:.98rem;line-height:1.6}
+.when{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.when span{font-size:.88rem;padding:1px 12px;border-radius:99px;background:var(--raised);line-height:1.8}
+.when .clock{border:1px solid var(--mood);font-variant-numeric:tabular-nums}
+
+.story{margin-top:28px;max-width:64ch}
+.narr{margin:0 0 1.05em}
+.say{margin:1.2em 0;padding:8px 0 8px 18px;border-left:3px solid var(--who)}
+.say .who small{color:var(--dim);font-family:var(--font-body);font-size:.85rem;margin-left:6px}
+.say .who{display:block;font-family:var(--font-display);color:var(--who);font-size:.98rem;line-height:1.7}
+.say p{margin:.1em 0 0;font-size:1.1rem}
+
+.ask{font-family:var(--font-display);font-weight:400;font-size:1.05rem;color:var(--dim);margin:30px 0 12px}
+.choices{display:grid;gap:12px;max-width:720px}
+.choice{text-align:left;color:var(--ink);background:var(--raised);border:1.5px solid var(--line);border-radius:16px;padding:15px 20px;cursor:pointer;line-height:1.7;
+  transition:border-color .15s,box-shadow .15s,transform .15s}
+.choice:hover{border-color:var(--amber);box-shadow:0 0 18px -6px var(--amber)}
+.choice:active{transform:translateY(1px)}
+
+.result{margin-top:30px;max-width:720px;padding:22px 26px;border-radius:18px;background:var(--raised);border-left:4px solid var(--mood)}
+.picked{color:var(--dim);font-size:.95rem;margin:0 0 10px;line-height:1.7}
+.result-text{margin:0 0 16px;font-size:1.08rem}
+.delta{display:inline-flex;gap:6px;align-items:center;padding:2px 13px;border-radius:99px;font-size:.92rem;line-height:1.8}
+.delta.gain{background:rgba(127,233,195,.14);color:var(--mint)}
+.delta.loss{background:rgba(255,143,122,.15);color:var(--coral)}
+.result .chips{gap:8px}
+.result .btn{margin-top:22px}
+
+/* ---------- ending ---------- */
+.end-wrap{max-width:760px;margin:0 auto;padding-top:18px}
+.end-head{text-align:center}
+.end-emoji{font-size:3.2rem;line-height:1.4}
+.end-title{font-size:clamp(2rem,5vw,3.1rem)}
+.end-text{margin:26px 0 24px;font-size:1.1rem}
+.gc{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.gc h3{font-family:var(--font-display);font-weight:500;font-size:1.05rem;margin:0 0 6px;padding-top:12px}
+.gc .g{border-top:2px solid var(--mint)}
+.gc .c{border-top:2px solid var(--coral)}
+.gc ul{margin:0;padding-left:1.2em;color:var(--dim);font-size:.98rem}
+.sec-title{font-family:var(--font-display);font-weight:500;font-size:1.35rem;margin:48px 0 6px;line-height:1.5}
+.sec-sub{margin:0 0 16px;color:var(--dim);font-size:.96rem}
+.rows{display:grid;gap:14px}
+.row-top{display:flex;justify-content:space-between;font-size:.96rem;line-height:1.6;margin-bottom:5px}
+.mini{height:10px;border-radius:99px;background:#20183d}
+.mini i{display:block;height:100%;border-radius:99px;background:var(--tc);box-shadow:0 0 10px var(--tc);transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.timeline{list-style:none;margin:0;padding:0 0 0 20px;border-left:2px solid var(--line)}
+.timeline li{position:relative;padding:0 0 20px 20px}
+.timeline li::before{content:"";position:absolute;left:-29px;top:9px;width:12px;height:12px;border-radius:50%;background:var(--tc,var(--dim));box-shadow:0 0 10px var(--tc,transparent)}
+.tl-when{display:block;font-size:.85rem;color:var(--dim);line-height:1.6}
+.tl-title{display:block;font-family:var(--font-display);font-size:1.02rem;line-height:1.6}
+.tl-pick{display:block;color:var(--dim);font-size:.96rem;line-height:1.7}
+.tech{border-top:1px solid var(--line)}
+.tech details{border-bottom:1px solid var(--line)}
+.tech summary{cursor:pointer;list-style:none;padding:14px 4px;font-family:var(--font-display);font-size:1.05rem;line-height:1.6}
+.tech summary::-webkit-details-marker{display:none}
+.tech summary::after{content:"＋";float:right;color:var(--amber)}
+.tech details[open] summary::after{content:"－"}
+.tech .body{padding:0 4px 16px}
+.tech .body p{margin:0 0 8px;color:var(--dim);font-size:.98rem}
+.eg{margin:6px 0 0;padding:8px 14px;border-left:3px solid var(--amber);background:rgba(255,196,107,.08);font-size:1rem}
+.safety{margin-top:48px;padding:22px 26px;border-radius:18px;border:1.5px solid var(--coral);box-shadow:0 0 26px -12px var(--coral)}
+.safety h2{font-family:var(--font-display);font-weight:500;font-size:1.25rem;margin:0 0 8px;line-height:1.5}
+.safety ul{margin:0;padding-left:1.2em}
+.safety li{margin-bottom:6px}
+.gallery{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.gallery li{display:grid;grid-template-columns:2.2rem 1fr;gap:10px;align-items:start;line-height:1.6}
+.gallery .locked{opacity:.5}
+.gallery b{font-family:var(--font-display);font-weight:400;display:block}
+.gallery span.s{color:var(--dim);font-size:.92rem}
+.end-actions{display:flex;gap:12px;margin-top:40px;flex-wrap:wrap}
+.foot{margin:36px 0 0;font-size:.88rem;color:var(--dim);line-height:1.7}
+
+/* ---------- mobile ---------- */
+@media (max-width:860px){
+  body{font-size:1rem}
+  .shell{padding:14px 14px 56px}
+  .start-grid{grid-template-columns:1fr;gap:28px;min-height:0;padding-top:16px}
+  .sign-frame{padding:16px 22px 10px}
+  .setup{padding:22px 20px}
+  .layout{grid-template-columns:1fr;gap:18px;margin-top:14px}
+  .hud{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;padding:10px 12px;border-radius:14px}
+  .hud-name{display:none}
+  #hud-stats{grid-template-columns:repeat(4,1fr);gap:10px}
+  .stat-name .lbl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .stat-top{margin-bottom:4px;font-size:.9rem}
+  .stat-val small{display:none}
+  .stage{grid-template-columns:1fr;gap:4px;padding:16px 18px}
+  .stage-art{font-size:2rem}
+  .stage-place{font-size:1.2rem}
+  .story{margin-top:22px}
+  .gc{grid-template-columns:1fr}
+  .result{padding:18px 18px}
+  .btn{width:100%}
+  .btn.ghost{width:auto}
+  .end-actions .btn{width:100%}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important;scroll-behavior:auto !important}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ===== หน้าเริ่มเกม ===== -->
+  <section id="view-start" class="view">
+    <div class="start-grid">
+      <div>
+        <div class="sign-frame"><h1 class="neon start-title boot" id="neon-title">เพื่อนยื่นแก้วมา<br>ทำไงดี</h1></div>
+        <p class="lede">เกมเลือกทางเดินเรื่องการดื่มของนักศึกษา มีรุ่นพี่ เพื่อนสนิท ใบเสร็จที่ต้องหารกัน และเช้าวันถัดมาที่ต้องไปทำงานกลุ่ม ทุกทางเลือกมีทั้งข้อดีและราคาที่ต้องจ่าย ไม่มีคำตอบถูกผิดตายตัว</p>
+        <p class="fine">ใช้เวลาเล่นราว 6 ถึง 8 นาที เกมนี้เป็นสถานการณ์สมมติเพื่อการเรียนรู้ ไม่ได้ส่งเสริมการดื่ม</p>
+      </div>
+
+      <div class="setup">
+        <h2>ก่อนเริ่มเล่น</h2>
+
+        <div class="field">
+          <label class="field-label" for="in-name">คุณชื่ออะไร</label>
+          <span class="hint">ชื่อเล่นก็ได้ เกมจะเรียกชื่อนี้ตลอดเรื่อง</span>
+          <input id="in-name" class="text-in" type="text" maxlength="16" autocomplete="off" placeholder="พิมพ์ชื่อของคุณ">
+        </div>
+
+        <fieldset class="field">
+          <legend class="field-label">เวลาคุยกับรุ่นพี่ คุณใช้คำไหน</legend>
+          <span class="hint">มีผลกับบทพูดในเกมเท่านั้น</span>
+          <div class="chips">
+            <label class="opt"><input type="radio" name="voice" value="m"><span>ผม ครับ</span></label>
+            <label class="opt"><input type="radio" name="voice" value="f"><span>หนู ค่ะ</span></label>
+            <label class="opt"><input type="radio" name="voice" value="n" checked><span>เรา ไม่ใช้คำลงท้าย</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="field">
+          <legend class="field-label">เดือนนี้เงินในกระเป๋าเป็นยังไง</legend>
+          <div class="chips">
+            <label class="opt"><input type="radio" name="money" value="tight"><span>ตึงมือหน่อย</span></label>
+            <label class="opt"><input type="radio" name="money" value="ok" checked><span>พอใช้</span></label>
+            <label class="opt"><input type="radio" name="money" value="rich"><span>เหลือเฟือ</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="field">
+          <legend class="field-label">เรื่องคอแข็ง คุณเชื่อว่าตัวเองเป็นแบบไหน</legend>
+          <span class="hint">เป็นแค่ความเชื่อของคุณเอง ไม่มีผลถูกผิด</span>
+          <div class="chips">
+            <label class="opt"><input type="radio" name="tol" value="strong"><span>คอแข็ง</span></label>
+            <label class="opt"><input type="radio" name="tol" value="mid" checked><span>กลางๆ</span></label>
+            <label class="opt"><input type="radio" name="tol" value="rare"><span>ไม่ค่อยดื่ม</span></label>
+          </div>
+        </fieldset>
+
+        <div>
+          <button class="btn primary" id="btn-start" disabled>เริ่มเล่น</button>
+          <p class="hint" style="margin:12px 0 0">ชื่อและคำตอบอยู่ในเบราว์เซอร์ของคุณเท่านั้น ไม่ถูกส่งไปที่ไหน</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== หน้าเกม ===== -->
+  <section id="view-game" class="view" hidden>
+    <header class="topbar">
+      <div class="brand">เพื่อนยื่นแก้วมา ทำไงดี</div>
+      <button class="btn ghost" id="btn-restart">เริ่มใหม่</button>
+    </header>
+    <div class="track" aria-hidden="true"><div class="track-fill" id="track-fill"></div></div>
+
+    <div class="layout">
+      <aside class="hud" aria-label="ค่าสถานะของคุณ">
+        <p class="hud-name" id="hud-name"></p>
+        <div id="hud-stats"></div>
+      </aside>
+
+      <main class="main" id="main">
+        <section class="stage" id="stage">
+          <div class="stage-art" id="stage-art" aria-hidden="true"></div>
+          <div>
+            <h2 class="stage-place" id="stage-place" tabindex="-1"></h2>
+            <p class="stage-where" id="stage-where"></p>
+            <div class="when"><span id="chip-day"></span><span class="clock" id="chip-time"></span></div>
+          </div>
+        </section>
+        <article class="story" id="story"></article>
+        <div id="actions" aria-live="polite"></div>
+      </main>
+    </div>
+  </section>
+
+  <!-- ===== หน้าตอนจบ ===== -->
+  <section id="view-end" class="view" hidden></section>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+
+const $  = (s,r=document)=>r.querySelector(s);
+const esc = t => String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ---------- ค่าสถานะ ---------- */
+const STATS = {
+  h:{label:'สุขภาพ',emoji:'💪'},
+  b:{label:'ความสัมพันธ์',emoji:'🤝'},
+  m:{label:'เงินในกระเป๋า',emoji:'💰'},
+  c:{label:'ความมั่นใจ',emoji:'😎'}
+};
+const TAGS = {
+  assert:{label:'พูดตรงและรักษาขอบเขตของตัวเอง',color:'--mint'},
+  care:  {label:'ดูแลคนอื่นและบรรยากาศ',color:'--orchid'},
+  follow:{label:'ตามแรงกดดันของกลุ่ม',color:'--amber'},
+  dodge: {label:'หลบเลี่ยงไม่เผชิญหน้า',color:'--coral'}
+};
+const WHO = {
+  tawan:{name:'พี่ตะวัน',role:'รุ่นพี่ปีสาม',c:'--amber'},
+  min:  {name:'มิ้น',role:'เพื่อนสนิทของคุณ',c:'--mint'},
+  phum: {name:'ภูมิ',role:'เพื่อนร่วมกลุ่ม',c:'--orchid'},
+  praew:{name:'แพร',role:'เพื่อนร่วมงานกลุ่ม',c:'--sky'}
+};
+const TOTAL_STEPS = 7;
+
+/* ---------- state ---------- */
+let state;
+function freshState(){
+  return {name:'',me:'เรา',kp:'',money0:60,
+    stats:{h:60,b:55,m:60,c:55},
+    flags:new Set(),
+    tags:{assert:0,care:0,follow:0,dodge:0},
+    drinks:0, history:[], scene:null, decisions:0};
+}
+state = freshState();
+const has = f => state.flags.has(f);
+const val = x => typeof x==='function' ? x(state) : x;
+const fmt = t => String(t)
+  .replace(/\{name\}/g,state.name)
+  .replace(/\{me\}/g,state.me)
+  .replace(/\{kp\}/g,state.kp);
+
+const N = t => ({k:'n',t});
+const S = (who,t) => ({k:'s',who,t});
+
+/* ---------- ฉากทั้งหมด ---------- */
+const SCENES = {
+
+party:{
+  step:1, title:'งานเลี้ยงต้อนรับน้อง', day:'สัปดาห์ที่ 2', time:'19:30',
+  place:'งานเลี้ยงต้อนรับน้องใหม่', where:'ห้องเชียร์ของคณะ', art:'🎉🍻🪩', mood:'--amber',
+  body:()=>[
+    N('เสียงเพลงดังจนพื้นสั่น ห้องเชียร์ของคณะวันนี้แน่นกว่าทุกวัน คุณนั่งอยู่วงเดียวกับเพื่อนใหม่ที่เพิ่งรู้จักกันได้สองสัปดาห์'+(has('rare')?' คุณไม่ค่อยดื่มอยู่แล้ว แก้วตรงหน้าเลยดูใหญ่กว่าปกติ':'')),
+    N('มิ้น เพื่อนที่สนิทกันมาตั้งแต่วันปฐมนิเทศ นั่งอยู่ข้างๆ ถือแก้วน้ำเปล่าเงียบๆ มิ้นบอกตั้งแต่แรกว่าไม่ดื่ม แต่ไปงานเลี้ยงทุกงานเสมอ'),
+    N('แล้วพี่ตะวัน รุ่นพี่ปีสามที่ทุกคนเกรงใจ ก็เดินมาหยุดตรงหน้าคุณ พร้อมแก้วที่รินเต็มมาแล้ว'),
+    S('tawan','น้อง! มาแล้วต้องชนกับพี่หน่อย นี่ธรรมเนียมของคณะเรา ไม่ดื่มก็เหมือนไม่ให้เกียรติกันนะ'),
+    N('ทั้งวงเงียบลงเหมือนรอดูว่าคุณจะทำอะไร')
+  ],
+  choices:()=>[
+    {label:'รับแก้วมาดื่มรวดเดียว ให้จบๆ ไป', tag:'follow', fx:{h:-8,b:8,c:-5}, drinks:1, set:['f1_follow'],
+     result:'เสียงเฮดังลั่นทั้งวง พี่ตะวันตบบ่าคุณแรงๆ พร้อมคำว่า “เก่งมาก!” คอร้อนวูบและท้องเริ่มปั่นนิดๆ แต่คุณรู้สึกว่าเข้ากลุ่มได้แล้ว แม้ในใจจะแอบสงสัยว่านี่คือสิ่งที่ตัวเองอยากทำจริงหรือเปล่า',
+     next:'exam'},
+    {label:'พูดตรงๆ ว่า “ขอบคุณ{kp}พี่ แต่{me}ไม่ดื่ม{kp}”', tag:'assert', fx:{b:-6,c:8}, set:['f1_refuse'],
+     result:'อากาศในวงนิ่งไปสองวินาที พี่ตะวันเลิกคิ้ว “อ้าว ไม่ดื่มเหรอ” แต่ไม่ได้บังคับต่อ มิ้นหันมายิ้มบางๆ ให้กำลังใจ ใจของคุณเต้นแรงกว่าตอนเข้าห้องสอบ แต่ก็โล่งที่ไม่ต้องทำอะไรฝืนใจ มีสองสามคนในวงมองคุณแปลกๆ อยู่พักหนึ่ง',
+     next:'exam'},
+    {label:'รับแก้วมาถือไว้ ทำเป็นจิบ แล้ววางลงเงียบๆ', tag:'dodge', fx:{b:2,c:-4,h:-2}, set:['f1_dodge'],
+     result:'พี่ตะวันเห็นแก้วอยู่ในมือคุณก็พอใจ แล้วเดินไปทักคนอื่นต่อ คุณผ่านมาได้ แต่รู้สึกเหมือนแอบทำอะไรผิดทั้งที่ไม่ได้ผิดอะไร และต้องคอยระวังไม่ให้ใครสังเกตว่าแก้วยังเต็มอยู่ตลอดคืน',
+     next:'exam'},
+    {label:'หัวเราะ แล้วขอน้ำส้มแทน “ขอชนด้วยน้ำส้มได้ไหม{kp}พี่ วันนี้{me}เป็นคนถือกระเป๋าให้เพื่อน”', tag:'assert', fx:{b:2,c:5}, set:['f1_soft'],
+     result:'พี่ตะวันหัวเราะลั่น “ได้ๆ แต่รอบหน้าไม่รอดนะ” แล้วหยิบน้ำส้มมาให้จริงๆ คุณผ่านมาได้ด้วยรอยยิ้ม แต่รู้ว่าเรื่องนี้ยังไม่จบ เพราะคำว่า “รอบหน้า” ยังลอยอยู่ในอากาศ',
+     next:'exam'}
+  ]
+},
+
+exam:{
+  step:2, title:'หลังสอบเสร็จ', day:'สัปดาห์สอบปลายภาค', time:'17:45',
+  place:'สอบวิชาสุดท้ายเสร็จแล้ว', where:'หน้าตึกเรียนรวม', art:'📝😮‍💨🎒', mood:'--mint',
+  body:()=>[
+    N('สอบวิชาสุดท้ายเสร็จแล้ว คุณเดินออกจากห้องสอบด้วยความรู้สึกเหมือนยกภูเขาออกจากอก'),
+    N('ภูมิ เพื่อนร่วมกลุ่มที่พลังงานล้นที่สุดในสาย ตะโกนมาจากไกลๆ ส่วนมิ้นเดินตามมาข้างหลังพร้อมรอยยิ้ม'),
+    S('phum','เสร็จแล้วโว้ย! คืนนี้ร้านหลังมอ ไม่เมาไม่เลิก! {name} ต้องไปนะ ห้ามเบี้ยว'),
+    S('min','มิ้นไปด้วยนะ แต่ขอน้ำเปล่าเหมือนเดิม'),
+    N(state.stats.m<45
+      ? 'คุณเปิดแอปธนาคารดูยอดเงิน ตัวเลขที่เห็นทำให้ถอนหายใจ เดือนนี้ยังอีกหลายวันกว่าเงินจากทางบ้านจะเข้า'
+      : state.stats.m>=70
+        ? 'คุณเปิดแอปธนาคารดูยอดเงิน ยังเหลือพอให้ใช้ได้สบายๆ ในเดือนนี้'
+        : 'คุณเปิดแอปธนาคารดูยอดเงิน ไม่ได้เหลือมาก แต่ก็ไม่ถึงกับตึง')
+  ],
+  choices:()=>[
+    {label:'ไปเลย! คืนนี้จัดเต็ม', tag:'follow', fx:{b:6,m:-6,h:-4,c:2}, drinks:1, set:['there'],
+     result:'ภูมิตะโกนดีใจแล้วโอบไหล่คุณเดินไปทางร้าน “นี่แหละเพื่อนแท้!” คุณยิ้มตาม ยังไม่รู้เลยว่าคืนนี้จะยาวแค่ไหน',
+     next:'pressure'},
+    {label:'ไปด้วย แต่บอกไว้ก่อนว่าจะดื่มแค่สองแก้ว', tag:'assert', fx:{b:2,c:6,m:-3}, set:['there','plan'],
+     result:'ภูมิทำหน้าเซ็ง “โอ๊ย ประกาศก่อนเลยเหรอ” แต่มิ้นพยักหน้าเห็นด้วย การบอกก่อนทำให้คุณรู้สึกว่ามีเส้นของตัวเองแล้วตั้งแต่ก่อนไปถึงร้าน',
+     next:'pressure'},
+    {label:'เสนอให้ไปกินหมูกระทะแล้วเล่นเกมกันแทน', tag:'care', fx:{b:3,c:4,m:-4}, set:['there','altplace'],
+     result:'ภูมิลังเลนิดหนึ่งแล้วบอก “เอาก็เอา แต่ขอเบียร์สักสองขวดนะ” มิ้นยิ้มกว้างที่ได้ไปที่ที่ไม่ต้องนั่งดมกลิ่นเหล้า ทุกคนตกลงกันได้ในแบบที่ไม่มีใครเสียหน้า',
+     next:'pressure'},
+    {label:'ขอบายคืนนี้ เหนื่อยแล้ว อยากพักผ่อน', tag:'assert', fx:{b:-5,c:2,h:4},
+     result:'ภูมิทำหน้าเหมือนโดนหักหลัง “โธ่ ปีหนึ่งมีครั้งเดียวนะ” แต่มิ้นบอกว่า “ไม่เป็นไร พักเถอะ” คุณเดินกลับหอพร้อมความรู้สึกผสมกัน ทั้งโล่งและแอบกลัวว่าจะพลาดอะไรไป',
+     next:'home'}
+  ]
+},
+
+home:{
+  step:3, title:'อยู่ห้องคนเดียว', day:'คืนวันสอบ', time:'21:30',
+  place:'คืนที่เพื่อนออกไปสนุกกัน', where:'ห้องพักของคุณ', art:'🛏️📱🌙', mood:'--sky',
+  body:()=>[
+    N('คุณนอนเล่นมือถืออยู่บนเตียง เงียบจนได้ยินเสียงพัดลม'),
+    N('สตอรี่ในไอจีขึ้นรัวๆ ภาพเพื่อนชนแก้ว เสียงหัวเราะลอดออกมาจากวิดีโอ ทุกคนดูสนุกกันมาก ความรู้สึกตกขบวนเริ่มกัดใจ')
+  ],
+  choices:()=>[
+    {label:'ส่งข้อความไปหามิ้น บอกว่าถ้ามีอะไรเรียกได้เลยนะ', tag:'care', fx:{b:5,c:2},
+     result:'มิ้นตอบกลับเป็นสติกเกอร์ยกนิ้วพร้อมข้อความ “ขอบใจนะ เดี๋ยวมิ้นดูภูมิให้” คุณวางมือถือลง ถึงไม่ได้อยู่ที่นั่นก็ยังรู้สึกว่าเป็นส่วนหนึ่งของกลุ่มอยู่',
+     next:'late'},
+    {label:'ปิดแอปแล้วนอนตามแผนที่วางไว้', tag:'assert', fx:{h:8,c:4,b:-2},
+     result:'คุณวางมือถือคว่ำแล้วหลับไปเร็วกว่าที่คิด ร่างกายได้พักจริงๆ สักที',
+     next:'late'},
+    {label:'ไถดูสตอรี่ต่ออีกชั่วโมง แล้วเริ่มสงสัยว่าไม่ไปนี่พลาดหรือเปล่า', tag:'dodge', fx:{c:-6,h:-2},
+     result:'ยิ่งดูก็ยิ่งเหมือนทุกคนมีความสุขกว่าคุณ ทั้งที่ภาพในสตอรี่ก็เป็นแค่ช่วงที่ดีที่สุดของคืนเท่านั้น คุณรู้ตัวช้าไปว่าเสียเวลาไปเปล่าๆ',
+     next:'late'}
+  ]
+},
+
+pressure:{
+  step:3, title:'แก้วแรกของคืนนี้', day:'คืนวันสอบ', time:'20:15',
+  place:()=>has('altplace')?'หมูกระทะหลังมหาวิทยาลัย':'ร้านนั่งชิลหลังมหาวิทยาลัย',
+  where:'โต๊ะยาวริมถนน', art:()=>has('altplace')?'🥩🔥🎲':'🍺🎶🪑', mood:'--orchid',
+  body:()=>[
+    N(has('altplace')
+      ? 'เตาหมูกระทะควันโขมง เสียงหัวเราะดังลั่นโต๊ะ ภูมิสั่งเบียร์ขวดแรกมาตั้งไว้กลางโต๊ะ “ตามสัญญา” แล้วเปิดฝาก่อนที่ใครจะทันพูดอะไร'
+      : 'โต๊ะเต็มไปด้วยเสียงหัวเราะ เสียงแก้วชน และกลิ่นกับแกล้มที่ลอยมาตลอดเวลา ภูมิเปิดขวดที่สามแล้วก่อนที่ใครจะทันนับ'),
+    N('มิ้นนั่งอยู่ข้างคุณ ตักผักใส่จานให้ทุกคนเงียบๆ'+(has('plan')?' คุณนึกถึงสิ่งที่บอกไว้ตั้งแต่ก่อนมาว่าจะดื่มแค่สองแก้ว':'')),
+    S('phum','{name}! ยังไม่ได้ชนกับภูมิเลยนะ! เพื่อนกันต้องชนสิ นี่แก้วแรกของคืนนี้ ห้ามปฏิเสธ'),
+    N('ครั้งนี้ไม่ใช่รุ่นพี่ที่กดดัน แต่เป็นเพื่อนที่คุณรักที่สุดคนหนึ่ง และมันยากกว่ากันเยอะ')
+  ],
+  choices:()=>[
+    {label:'ชนแก้วกับภูมิ แล้วดื่มแค่แก้วเดียวตามที่ตั้งใจไว้', tag:'assert', fx:{h:-3,b:3,c:4}, drinks:1,
+     result:'คุณชนแก้วยิ้มๆ ดื่มไปแก้วเดียวแล้ววางลง “แค่นี้แหละ” ภูมิบ่นนิดหน่อยแต่ก็ไปสนใจเรื่องอื่นต่อ การบอกขอบเขตด้วยน้ำเสียงสบายๆ ทำให้ไม่มีใครรู้สึกโดนตัดสิน แม้ภูมิจะแซวว่า “ใจแข็งจัง” อยู่เป็นระยะ',
+     next:'bill'},
+    {label:'ชนด้วยแก้วน้ำเปล่า “{me}ชนด้วยน้ำนะ ยังอยากรู้เรื่องพรุ่งนี้อยู่”', tag:'assert', fx:{b:-3,c:7,h:2},
+     result:'ภูมิทำท่าเอามือทาบอก “เจ็บปวด” แล้วหัวเราะ ชนแก้วกับคุณอยู่ดี มีสองสามคนแซวแรงไปหน่อย แต่มิ้นเงียบๆ ยกแก้วน้ำมาชนด้วยอีกคน คุณไม่ได้อยู่คนเดียว',
+     next:'bill'},
+    {label:'ดื่มไปเพราะเกรงใจ ไม่อยากทำให้เพื่อนเสียบรรยากาศ', tag:'follow', fx:{h:-8,b:8,c:-6}, drinks:2,
+     result:'ภูมิดีใจจนเอามือมาเขย่าหัวคุณ “นี่แหละเพื่อนเรา!” แก้วแรกตามมาด้วยแก้วสองแก้วสามโดยที่คุณไม่ทันนับ ความอบอุ่นบนโต๊ะเป็นของจริง แต่คุณเริ่มรู้สึกว่านี่ไม่ใช่จังหวะที่ตัวเองตั้งใจไว้',
+     next:'bill'},
+    {label:'ชวนเล่นเกมแทน ใครแพ้ต้องเล่าเรื่องน่าอายที่สุดของตัวเอง', tag:'care', fx:{b:6,c:3},
+     result:'ตาภูมิลุกวาวทันที “เอาสิ!” ทั้งโต๊ะเปลี่ยนเป็นวงเกมอย่างสนุกสนาน แก้วในมือภูมิยังมีอยู่ แต่ความสนใจของทั้งโต๊ะย้ายไปแล้ว คุณรู้สึกว่านี่คือการช่วยเพื่อนโดยไม่ต้องพูดตรงๆ',
+     next:'bill'}
+  ]
+},
+
+bill:{
+  step:4, title:'ใบเสร็จมาถึงโต๊ะ', day:'คืนวันสอบ', time:'22:40',
+  place:'ใบเสร็จมาถึงโต๊ะ', where:()=>has('altplace')?'หมูกระทะหลังมหาวิทยาลัย':'ร้านนั่งชิลหลังมหาวิทยาลัย', art:'🧾💸😅', mood:'--amber',
+  body:()=>[
+    N('เวลาผ่านไปเร็วจนคุณไม่ทันดูนาฬิกา บนโต๊ะมีขวดเปล่าเรียงกันเป็นแถว เด็กเสิร์ฟเดินมาวางใบเสร็จไว้ตรงกลาง'),
+    S('phum','หารเท่ากันนะทุกคน! คนละสามร้อยกว่าๆ เอง สบายๆ'),
+    N(state.stats.m<45
+      ? 'สามร้อยกว่าบาทคือค่าข้าวของคุณเกือบสามวัน'
+      : 'สามร้อยกว่าบาทไม่ได้แพงมากนัก'),
+    N(state.drinks<=1
+      ? 'แต่คุณรู้ว่าตัวเองดื่มไปแค่ส่วนน้อยของบิลนี้ ทุกคนหยิบกระเป๋าสตางค์กัน มีเพียงคุณที่ยังคิดอยู่'
+      : 'คุณมองตัวเลขแล้วรู้ตัวว่าคืนนี้ใช้เงินไปมากกว่าที่ตั้งใจ ทุกคนหยิบกระเป๋าสตางค์กัน มีเพียงคุณที่ยังคิดอยู่')
+  ],
+  choices:()=>[
+    {label:'หารเท่ากันตามนั้น ไม่อยากมีปัญหา', tag:'follow', fx:{m:-12,b:3,c:-3},
+     result:'คุณยื่นเงินไปพร้อมรอยยิ้มแหยๆ ไม่มีใครรู้เลยว่าลึกๆ คุณแอบคิดเรื่องเงินตลอดทางกลับ เรื่องเงินเป็นเรื่องที่คนเกรงใจกันจนพูดไม่ออกบ่อยที่สุดเรื่องหนึ่ง',
+     next:'late'},
+    {label:'บอกตรงๆ ว่าขอจ่ายเฉพาะส่วนของตัวเอง', tag:'assert', fx:{m:-5,b:-4,c:7},
+     result:'โต๊ะเงียบไปครู่ ภูมิบ่น “โห คิดเล็กคิดน้อยจัง” แต่มิ้นกับอีกสองคนพยักหน้า “ก็แฟร์นะ” สุดท้ายบิลถูกแยก คุณเสียเงินน้อยกว่าที่คิด แต่เสียบรรยากาศไปนิด และมีคนหน้าเสียอยู่หนึ่งสองคน',
+     next:'late'},
+    {label:'เสนอให้แยกบิลเป็นส่วนของคนดื่มกับคนไม่ดื่มก่อนหาร', tag:'care', fx:{m:-6,b:2,c:4},
+     result:'มีเสียงบ่นเล็กน้อยว่า “ยุ่งยาก” แต่พอมิ้นหยิบเครื่องคิดเลขมาช่วย ทุกคนก็ยอมรับได้ คนที่ไม่ดื่มได้จ่ายในส่วนที่ยุติธรรม และเป็นครั้งแรกที่โต๊ะนี้คุยเรื่องนี้กันตรงๆ',
+     next:'late'},
+    {label:'จ่ายหารเท่า แล้วสั่งเพิ่มอีกแก้วเพื่อให้ “คุ้ม” จะได้ไม่เสียเปล่า', tag:'follow', fx:{m:-10,h:-9,b:5}, drinks:1,
+     result:'ใครๆ ก็เคยเจอความคิดแบบนี้ “จ่ายไปแล้วต้องกินให้คุ้ม” คุณสั่งเพิ่มอีกแก้ว ความคุ้มที่ได้คือหัวที่เริ่มหนักและเงินที่หายไปมากขึ้น',
+     next:'late'}
+  ]
+},
+
+late:{
+  step:5, title:'ดึกที่สุดของคืน', day:'คืนวันสอบ', time:()=>has('there')?'00:50':'01:05',
+  place:()=>has('there')?'ร้านเริ่มปิดไฟ':'สายที่ไม่ได้คาดคิด',
+  where:()=>has('there')?'หน้าร้าน ถนนหลังมหาวิทยาลัย':'ห้องพักของคุณ',
+  art:()=>has('there')?'🌙🏍️😵':'📞🌙⚠️', mood:'--coral',
+  body:()=>has('there')?[
+    N('ร้านเริ่มปิดไฟ ทุกคนทยอยลุกออกมาหน้าร้าน อากาศเย็นลงและความเงียบเข้ามาแทนเสียงเพลง'),
+    N('ภูมิเดินโซเซตรงไปที่มอเตอร์ไซค์ ควานหากุญแจอยู่นานแล้วพูดเสียงอ้อแอ้'),
+    S('phum','ไม่เป็นไรๆ กลับเองได้ ห้องอยู่แค่นี้เอง ไม่ไกลหรอก'),
+    N('มิ้นหันมามองคุณด้วยสายตาที่บอกว่า “ทำอะไรสักอย่างสิ”')
+  ]:[
+    N('ตีหนึ่งกว่า มือถือสั่นรัว ชื่อมิ้นขึ้นบนหน้าจอ'),
+    S('min','{name} ขอโทษที่โทรดึกนะ ภูมิเมาหนักมาก แล้วจะขี่มอไซค์กลับเองให้ได้ มิ้นห้ามเท่าไหร่ก็ไม่ฟัง ช่วยหน่อยได้ไหม'),
+    N('คุณอยู่ห่างจากร้านหลายกิโล แต่เสียงของมิ้นฟังดูเริ่มตื่นตระหนก')
+  ],
+  choices:()=>has('there')?[
+    {label:'แย่งกุญแจมาเก็บไว้ เรียกรถกลับ แล้วไปส่งถึงห้อง', tag:'care', fx:{h:-3,m:-9,b:8,c:5}, set:['saved','tired'],
+     result:'ภูมิโวยว่า “เอากุญแจคืนมา!” ได้ครู่เดียวก็เงียบ พอนั่งอยู่บนรถเขาหลับพิงกระจกไปเลย คุณไปส่งถึงหน้าห้องและเห็นเขาเดินเข้าห้องไปได้ ส่วนมอเตอร์ไซค์ค่อยกลับมาเอาตอนเช้า ค่ารถและเวลานอนที่เสียไปแลกกับความสบายใจที่ได้กลับมา พรุ่งนี้ภูมิอาจจำเรื่องนี้ไม่ได้ แต่คุณจำได้',
+     next:'morning'},
+    {label:'ช่วยมิ้นพาภูมิไปนอนที่ห้องของคุณ', tag:'care', fx:{h:-3,m:-3,b:9,c:3}, set:['saved','tired'],
+     result:'สองคนช่วยกันพยุงภูมิขึ้นรถ ห้องแคบๆ ของคุณมีเสียงกรนดังไปทั้งห้อง ภูมิหลับทันทีที่หัวถึงหมอน คุณนอนตะแคงข้างเขาไว้ ไม่กล้าหลับสนิท ตอนเช้าตัวปวดเมื่อยไปหมด แต่รู้ว่าเพื่อนปลอดภัย',
+     next:'morning'},
+    {label:'พูดว่า “ภูมิ ระวังตัวนะ” แล้วปล่อยให้ขี่กลับเอง', tag:'dodge', fx:{c:-8,b:-4}, set:['tired'],
+     result:'เขาโบกมือแล้วขี่ออกไป ส่วนคุณกลับห้องแล้วนอนไม่หลับทั้งคืน รอข้อความ “ถึงแล้ว” ที่มาช้ากว่าที่ควรจะเป็นนานมาก นานพอให้หัวใจคุณเต้นแรงกว่าตอนเดินออกจากร้าน ครั้งนี้ทุกอย่างจบด้วยดี แต่คุณรู้ว่าไม่ใช่เพราะการตัดสินใจของคุณ',
+     next:'morning'},
+    {label:'ปล่อยให้มิ้นจัดการต่อ เพราะคุณเองก็ง่วงและอยากกลับแล้ว', tag:'dodge', fx:{h:2,c:-4,b:-5},
+     result:'มิ้นถอนหายใจแล้วรับหน้าที่ต่อ ไม่ได้ว่าอะไรคุณ แต่สีหน้านั้นตามคุณไปตลอดทางกลับ การดูแลคนเมาไม่ควรตกเป็นภาระของคนที่ไม่ดื่มเสมอไป แต่มันเกิดขึ้นบ่อยกว่าที่ใครคิด',
+     next:'morning'}
+  ]:[
+    {label:'ลุกขึ้นแต่งตัว เรียกรถไปรับทั้งสองคน', tag:'care', fx:{h:-6,m:-10,b:10,c:5}, set:['saved','tired'],
+     result:'ไปถึงตอนภูมินั่งพิงเสาอยู่หน้าร้าน คุณกับมิ้นช่วยกันพาเขาขึ้นรถแล้วไปส่งถึงห้อง กลับมาถึงห้องตัวเองตอนตีสาม คุณเสียเวลานอนและเงินค่ารถไปพอสมควร แต่รู้ว่าเพื่อนคนนี้ปลอดภัย',
+     next:'morning'},
+    {label:'ช่วยทางโทรศัพท์ บอกมิ้นให้ยึดกุญแจ เรียกรถ และแชร์ตำแหน่งกันไว้', tag:'care', fx:{b:6,c:4,m:-2,h:-1}, set:['saved'],
+     result:'คุณคุยกับมิ้นทางโทรศัพท์จนภูมิยอมขึ้นรถ ไม่ต้องออกจากห้อง แต่ก็ไม่ได้ทิ้งเพื่อนไว้ การช่วยจากระยะไกลก็นับเป็นการช่วยเหมือนกัน ถ้ารู้ว่าต้องบอกอะไร',
+     next:'morning'},
+    {label:'ตอบสั้นๆ ว่า “ขอโทษนะ ง่วงมาก ไม่ไหวจริงๆ” แล้วปิดเสียงมือถือ', tag:'dodge', fx:{b:-10,c:-6,h:3},
+     result:'คุณวางมือถือไว้ข้างหมอนแล้วพยายามนอนต่อ แต่ก็หลับไม่สนิท เช้ามาเห็นข้อความของมิ้นเป็นสิบข้อความ และรู้ตัวว่าคืนนี้คุณไม่ได้อยู่ตรงนั้นตอนที่เพื่อนต้องการ',
+     next:'morning'}
+  ]
+},
+
+morning:{
+  step:6, title:'เช้าวันถัดมา', day:'เช้าวันถัดมา', time:'08:30',
+  place:'เช้าวันถัดมา', where:'ห้องพักของคุณ', art:'☀️☕📚', mood:'--sky',
+  body:()=>[
+    N(state.drinks>=3
+      ? 'แสงแดดแยงตาจนต้องยกมือปิด หัวหนักเหมือนมีอะไรกดอยู่ ปากแห้ง คอแห้ง ท้องไส้ปั่นป่วน'+(has('cocky')?' ความมั่นใจเมื่อวานที่ว่า “คอแข็ง” ไม่ช่วยอะไรเลยตอนนี้':'')
+      : state.drinks>=1
+        ? 'ตื่นมาด้วยหัวหนักนิดหน่อย แต่ยังพอไหว คุณรู้ว่าถ้าเมื่อคืนไปต่ออีกสักสองสามแก้ว คงไม่ได้ลุกง่ายๆ แบบนี้'
+        : 'ตื่นมาด้วยร่างกายที่พร้อมกว่าที่คิด'+(has('tired')?' แม้ตาจะปรืออยู่บ้างเพราะนอนน้อยจากการดูแลเพื่อนเมื่อคืน':' แสงแดดยามเช้าเข้ามาอย่างนุ่มนวล')),
+    N('บ่ายสองต้องพรีเซนต์งานกลุ่มของวิชาที่คุมเข้มที่สุดของเทอม แพรนัดซ้อมกันที่ห้องสมุดตอนสิบโมง และคุณเป็นคนที่ต้องพูดช่วงสำคัญที่สุดของงาน'),
+    S('praew','เจอกันสิบโมงนะ อย่าลืมสไลด์ของ{name} วันนี้ต้องเป๊ะ')
+  ],
+  choices:()=>[
+    {label:'ฝืนไปเลย ชงกาแฟเข้มๆ สามแก้วแล้วลุยซ้อม', tag:null, fx:{h:-4,c:3},
+     result:s=>s.drinks>=3
+       ? 'กาแฟสามแก้วช่วยให้ตาสว่าง แต่ไม่ได้ช่วยให้สมองเร็วขึ้น คุณพูดตกไปสองประโยคระหว่างซ้อม และเห็นสายตาของแพรที่มองมา'
+       : 'กาแฟสามแก้วกับความพยายามพอให้ผ่านการซ้อมไปได้ แม้จะรู้สึกใจสั่นจากคาเฟอีนมากกว่าที่ชอบ',
+     next:'week'},
+    {label:'ส่งข้อความบอกแพรตรงๆ ว่าเมื่อคืนนอนน้อย ขอเลื่อนซ้อมครึ่งชั่วโมง', tag:'assert', fx:{h:5,b:1,c:4},
+     result:'แพรตอบกลับมาว่า “โอเค ขอบใจที่บอกนะ ดีกว่ามาถึงแล้วไม่ไหว” คุณได้นอนต่ออีกสามสิบนาที แล้วไปซ้อมด้วยหัวที่โล่งกว่าเดิม การบอกข้อจำกัดตรงๆ ไม่ได้ทำให้ใครมองคุณแย่อย่างที่เคยกลัว',
+     next:'week'},
+    {label:'อ้างว่าไม่สบาย เพื่อเลื่อนซ้อมออกไป', tag:'dodge', fx:{b:-5,c:-5,h:3},
+     result:'คุณได้เวลานอนเพิ่ม แต่ระหว่างซ้อมต้องคอยกลบเกลื่อน แพรมองคุณหลายครั้งเหมือนจะรู้อะไรบางอย่าง ความจริงเล็กๆ ที่ถูกซ่อนไว้กลับทำให้คุณเหนื่อยกว่าเดิม',
+     next:'week'},
+    {label:'แวะซื้อข้าวต้มกับน้ำเกลือแร่ไปให้ภูมิก่อน แล้วค่อยไปซ้อม', tag:'care', fx:{m:-4,b:7,h:1},
+     result:'ภูมิเปิดประตูมาหน้ายับยู่ยี่ รับถุงข้าวต้มแล้วเงียบไปครู่หนึ่งก่อนพูดว่า “เมื่อคืน... ขอบใจนะ” คุณไปซ้อมช้ากว่ากำหนดสิบห้านาที พอแพรถามก็บอกความจริง แพรพยักหน้าแล้วบอกว่า “ไม่เป็นไร”',
+     next:'week'}
+  ]
+},
+
+week:{
+  step:7, title:'งานเลี้ยงรอบสอง', day:'สัปดาห์ถัดมา', time:'19:00',
+  place:'งานเลี้ยงรอบสอง', where:'ห้องเชียร์ของคณะ', art:'🍻🎤🪩', mood:'--amber',
+  body:()=>{
+    const out=[];
+    if(has('saved')) out.push(N('ภูมิเดินมาตบบ่าคุณเบาๆ ท่าทางเก้อเขิน “เรื่องคืนนั้น... ขอบใจจริงๆ นะ จำได้ไม่หมดหรอก แต่มิ้นเล่าให้ฟังแล้ว”'));
+    else out.push(N('ภูมิเดินมาทักคุณตามปกติเหมือนไม่มีอะไรเกิดขึ้น แต่มิ้นเงียบกว่าทุกครั้ง คุณรู้ว่ามีบางอย่างค้างอยู่ระหว่างกัน'));
+    if(has('f1_follow')){
+      out.push(N('พี่ตะวันเดินมาโอบไหล่คุณตั้งแต่ประตู แล้วยื่นแก้วมาให้ก่อนที่คุณจะทันตั้งตัว'));
+      out.push(S('tawan','น้องคนนี้แหละ สายจัดเต็ม! มา รอบนี้พี่ริน'));
+    } else if(has('f1_soft')){
+      out.push(N('พี่ตะวันเดินมาพร้อมแก้วสองใบ ยิ้มเหมือนล้อเล่น แต่แก้วก็ยื่นมาตรงหน้าคุณจริงๆ'));
+      out.push(S('tawan','รอบก่อนบอกว่ารอบหน้าไม่รอดนะ จำได้ไหม รอบนี้ไม่มีน้ำส้มแล้วนะ'));
+    } else if(has('f1_dodge')){
+      out.push(N('พี่ตะวันเดินมานั่งข้างคุณ ท่าทางไม่ได้โกรธ แต่สายตาจับจ้องอยู่ที่แก้วคุณ'));
+      out.push(S('tawan','เมื่อคราวก่อนพี่เห็นแก้วน้องเต็มตลอดงานเลยนะ วันนี้พี่จะนั่งดูจนน้องหมดแก้ว'));
+    } else {
+      out.push(N('พี่ตะวันเดินมาพร้อมแก้วใบเดิม'));
+      out.push(S('tawan','น้อง วันนี้พี่ไม่ได้บังคับนะ แต่เพื่อนๆ เขาอยากให้ชนกันสักแก้ว ลองดูไหม'));
+    }
+    out.push(N('ทุกอย่างวนกลับมาที่จุดเดิม แต่คราวนี้คุณมีคืนที่ผ่านมาอยู่ในหัวด้วย'));
+    return out;
+  },
+  choices:()=>[
+    {label:'ตอบสั้นๆ ชัดๆ “ขอผ่าน{kp}” ไม่ต้องอธิบายเหตุผล', tag:'assert', fx:{c:6,b:-1},
+     result:'คุณพูดเสียงนิ่งแต่ยิ้ม พี่ตะวันเลิกคิ้วแล้วพยักหน้า “โอเค” มันง่ายกว่าที่คิด ทั้งที่ในหัวคุณเตรียมข้ออ้างไว้ตั้งสามข้อ ไม่มีใครมีสิทธิ์เรียกร้องคำอธิบายจากคุณเวลาคุณปฏิเสธ',
+     next:'END'},
+    {label:'ชวนภูมิกับมิ้นตั้งกติกากลุ่มด้วยกัน เช่น ไม่ขับรถหลังดื่ม และตัดรอบกี่โมง', tag:'care', fx:{b:6,c:5,h:2},
+     result:'ภูมิทำหน้าเก้อๆ แล้วหัวเราะ “เออ ก็ดีนะ ก็ไม่อยากตื่นมาแบบเมื่อวันนั้นอีกแล้ว” กติกาเล็กๆ ไม่ได้ทำให้คืนนี้สนุกน้อยลง แต่ทำให้ทุกคนรู้ว่าต้องทำอะไรเมื่อสถานการณ์เริ่มหลุด',
+     next:'END'},
+    {label:'รับแก้วมาดื่มอีกรอบ เพราะไม่อยากเป็นตัวประหลาดของกลุ่ม', tag:'follow', fx:{h:-6,b:4,c:-5}, drinks:1,
+     result:'คุณยิ้มแล้วยกแก้วขึ้น เสียงเฮกลับมาเหมือนครั้งก่อน ความรู้สึกเป็นส่วนหนึ่งของกลุ่มก็กลับมาด้วย แต่พอแก้วเปล่า ความรู้สึกที่ตามมาก็เหมือนเดิม ว่านี่ไม่ใช่สิ่งที่ตัวเองเลือกจริงๆ',
+     next:'END'},
+    {label:'ไปร่วมงานแต่ไม่ดื่ม รับหน้าที่คนไม่ดื่มที่ช่วยเรียกรถให้เพื่อนตอนท้ายงาน', tag:'care', fx:{b:5,c:3,m:2,h:3},
+     result:'พี่ตะวันยักไหล่ “ก็ดี มีคนมีสติไว้บ้าง” หลายคนดูสบายใจขึ้นที่มีคุณอยู่ คืนนั้นคุณกลับถึงห้องตอนสามทุ่มกว่า ตื่นเช้ามาพร้อมความรู้สึกสงบ แม้จะไม่ได้เป็นดาวเด่นของงาน',
+     next:'END'}
+  ]
+}
+
+};
+
+/* ---------- ตอนจบ ---------- */
+const ENDINGS = {
+  assertGood:{emoji:'🛡️',color:'--mint',title:'ยืนหยัดในสไตล์ตัวเอง',
+    short:'พูดตรง รักษาเส้นของตัวเอง และเพื่อนยังอยู่ข้างๆ',
+    text:'คุณเลือกพูดตรงและรักษาขอบเขตของตัวเองเป็นส่วนใหญ่ และเพื่อนก็ยังอยู่ข้างๆ คุณ คืนที่ผ่านมาน่าจะทำให้เห็นว่าการปฏิเสธด้วยน้ำเสียงสบายๆ โดยเฉพาะเมื่อมีเพื่อนสักคนเห็นด้วย ง่ายกว่าที่ใจกลัวไว้มาก',
+    gain:['ร่างกายและเงินที่ไม่ต้องจ่ายโดยไม่จำเป็น','ความมั่นใจว่าพูดได้โดยไม่ต้องอธิบายยาว','เพื่อนที่เห็นแล้วว่าคุณมีเส้นของตัวเอง'],
+    cost:['สายตาและคำแซวเป็นระยะ','ต้องเตรียมใจทุกครั้งก่อนพูด']},
+  assertLone:{emoji:'🧊',color:'--sky',title:'ปฏิเสธเก่ง แต่ห่างเพื่อนไปหน่อย',
+    short:'ขอบเขตชัด แต่บรรยากาศกับเพื่อนบางคนตึงขึ้น',
+    text:'คุณรักษาขอบเขตของตัวเองไว้ได้ดีมาก แต่ความสัมพันธ์กับเพื่อนบางคนต้องแลกไปบ้าง ไม่ใช่เพราะคุณทำผิด แต่เพราะการปฏิเสธมักมาพร้อมเสียงแซวและบรรยากาศที่เปลี่ยนไป ถ้าอยากรักษาทั้งสองอย่างไว้ ลองปฏิเสธคู่กับการชวนเพื่อนทำอย่างอื่นด้วยกัน แทนที่จะปฏิเสธแล้วยืนอยู่คนเดียว',
+    gain:['เส้นของตัวเองชัดเจน','ร่างกายและเงินไม่รั่วไหล'],
+    cost:['บรรยากาศกับเพื่อนบางคนตึงขึ้น','รู้สึกโดดเดี่ยวในบางจังหวะ']},
+  care:{emoji:'🫶',color:'--orchid',title:'ตัวกลางที่ดูแลทุกคน',
+    short:'ดูแลเพื่อน บิล และกติกา แต่ต้องระวังไม่ให้ตัวเองเหนื่อยเกินไป',
+    text:'คุณเป็นคนที่คอยดูแลทั้งเพื่อนที่เมา บรรยากาศ บิล และกติกาของกลุ่ม ทำให้ทุกคนปลอดภัยและใกล้ชิดกันมากขึ้น แต่เวลา เงิน และแรงที่เสียไปก็ไม่น้อย การดูแลคนอื่นเป็นเรื่องดี ตราบใดที่ไม่ลืมเผื่อไว้ให้ตัวเองด้วย และตราบใดที่กลุ่มไม่ปล่อยให้เป็นหน้าที่ของคนไม่ดื่มคนเดียวเสมอ',
+    gain:['เพื่อนที่ไว้ใจคุณมากขึ้น','กติกาที่ทำให้กลุ่มปลอดภัยกว่าเดิม','ความภูมิใจที่ได้ช่วยคนในตอนที่จำเป็น'],
+    cost:['เวลานอน เงิน และแรงที่หมดไป','ความเสี่ยงที่จะกลายเป็นคนรับภาระประจำ']},
+  follow:{emoji:'🌊',color:'--amber',title:'ตามน้ำจนเหนื่อย',
+    short:'ได้ความอบอุ่นของกลุ่ม แต่จ่ายคืนด้วยสุขภาพและเงิน',
+    text:'คุณเลือกอยู่ในบรรยากาศและตามแรงกดดันของคนรอบข้างหลายครั้ง ได้ความอบอุ่นและความรู้สึกเป็นส่วนหนึ่งของกลุ่มมาเต็มๆ แต่ก็จ่ายคืนด้วยสุขภาพ เงิน และความรู้สึกที่ว่านี่ไม่ใช่สิ่งที่ตัวเองเลือกจริงๆ ไม่ได้แปลว่าคุณทำผิด เพียงแต่ราคาที่ตามมามักมาช้ากว่าความสนุกเสมอ',
+    gain:['ความรู้สึกเป็นส่วนหนึ่งของกลุ่ม','ไม่ต้องเผชิญหน้ากับสายตาและคำแซว'],
+    cost:['สุขภาพและเงินที่หายไปเร็วกว่าที่คิด','ความรู้สึกว่าตัวเองไม่ได้เลือกเอง']},
+  dodge:{emoji:'🌫️',color:'--coral',title:'เอาตัวรอดแบบเงียบๆ',
+    short:'เลี่ยงความขัดแย้ง ได้ความสงบชั่วคราว แต่ทิ้งความรู้สึกค้างไว้',
+    text:'คุณเลือกเลี่ยงความขัดแย้งหลายครั้ง ทั้งแอบวางแก้ว ปล่อยผ่าน หรือปิดเสียงมือถือ ได้ความสงบระยะสั้น แต่ก็มีความรู้สึกค้างอยู่ เช่น กังวลว่าเพื่อนคิดยังไง หรือรู้สึกว่าตัวเองไม่ได้อยู่ตรงนั้นตอนที่ควรอยู่ การหลบไม่ใช่เรื่องผิด ทุกคนมีวันที่ไม่มีแรงเผชิญหน้า แต่ถ้าอยากให้ครั้งหน้าง่ายขึ้น ลองซ้อมประโยคสั้นๆ ที่พูดได้จริงไว้สักประโยค',
+    gain:['หลีกเลี่ยงความตึงเครียดในขณะนั้น','ได้พักเมื่อไม่มีแรง'],
+    cost:['ความรู้สึกค้างคาและกังวลตามมา','ปัญหาเดิมวนกลับมาเพราะยังไม่ได้พูดกัน']}
+};
+const ENDING_ORDER = ['assertGood','assertLone','care','follow','dodge'];
+
+const TECHNIQUES = [
+  {t:'ปฏิเสธสั้นๆ ไม่ต้องอธิบายยาว', p:'ยิ่งอธิบายยาว ยิ่งเปิดช่องให้อีกฝ่ายต่อรอง ประโยคสั้นที่พูดด้วยน้ำเสียงปกติมักได้ผลกว่าข้ออ้างยาวๆ และคุณไม่จำเป็นต้องมีเหตุผลให้ใครตัดสินก็ได้', eg:'“ขอผ่านนะ” หรือ “วันนี้ไม่ดื่มนะ”'},
+  {t:'มีแก้วอื่นอยู่ในมือ', p:'น้ำอัดลม น้ำส้ม หรือม็อกเทลในมือ ช่วยให้คนเลิกยื่นแก้วให้ได้ง่ายขึ้น และคุณยังได้ชนแก้วร่วมวงเหมือนคนอื่น', eg:'“ขอชนด้วยอันนี้นะ”'},
+  {t:'ใช้เหตุผลจริงที่ไม่เปิดให้ต่อรอง', p:'เหตุผลที่เกี่ยวกับอนาคตอันใกล้ เช่น นัดเช้า หรือต้องขับรถ พูดแล้วคนมักไม่ตื๊อต่อ และไม่ต้องโกหก', eg:'“พรุ่งนี้มีนัดตอนเช้า ขอพักนะ”'},
+  {t:'ชวนเปลี่ยนกิจกรรม', p:'คนส่วนใหญ่ต้องการบรรยากาศสนุกๆ ร่วมกัน ไม่ได้ต้องการตัวเครื่องดื่มเสมอไป การชวนไปกินข้าว เล่นเกม หรือถ่ายรูป ช่วยให้ปฏิเสธโดยไม่เสียบรรยากาศ', eg:'“ไปกินข้าวต่อกันไหม เดี๋ยวเราเลี้ยงน้ำ”'},
+  {t:'หาพวกก่อนถึงที่', p:'ตกลงกับเพื่อนสนิทสักคนไว้ล่วงหน้า การไม่ต้องปฏิเสธอยู่คนเดียวง่ายกว่ามาก อย่างที่มิ้นทำให้ในเกม', eg:'“คืนนี้เราไม่ดื่มด้วยกันนะ”'},
+  {t:'คุยกติกากลุ่มก่อนสายเกินไป', p:'เรื่องเงินและความปลอดภัยพูดตอนก่อนสั่งง่ายกว่าตอนบิลมาหรือตอนมีคนเมา เช่น ใครไม่ดื่ม ใครเรียกรถ ตัดรอบกี่โมง หารบิลยังไง', eg:'“ก่อนสั่ง ขอแยกบิลระหว่างคนดื่มกับคนไม่ดื่มนะ”'}
+];
+
+const SAFETY = [
+  'อย่าปล่อยให้คนที่เมาขับรถหรือกลับคนเดียว ยึดกุญแจ เรียกรถ หรือให้ใครสักคนไปด้วย',
+  'กาแฟหรืออาบน้ำเย็นไม่ทำให้สร่างเมาเร็วขึ้น สิ่งที่ช่วยได้คือเวลา การจิบน้ำเปล่าทีละน้อย และมีคนอยู่ด้วย',
+  'ให้คนที่เมาหนักนอนตะแคง เผื่ออาเจียนจะได้ไม่สำลัก และคอยดูเป็นระยะจนกว่าจะรู้สึกตัวดี',
+  'ถ้าปลุกไม่ตื่น หายใจช้าหรือหยุดเป็นช่วงๆ ตัวเย็นซีดหรือเขียว อาเจียนไม่หยุด หรือชัก ให้โทร 1669 ทันที อย่ารอให้หายเอง',
+  'อยากคุยเรื่องการดื่มของตัวเองหรือเพื่อน โทรสายด่วนเลิกเหล้า 1413 หรือสายด่วนสุขภาพจิต 1323'
+];
+
+/* ---------- ที่เก็บตอนจบที่เคยเจอ (ในเครื่องเท่านั้น) ---------- */
+const STORE_KEY = 'pheuan-yuen-kaeo-endings-v1';
+function seenList(){ try{ const v=JSON.parse(localStorage.getItem(STORE_KEY)||'[]'); return Array.isArray(v)?v:[]; }catch(e){ return []; } }
+function markSeen(id){ try{ const l=seenList(); if(l.indexOf(id)<0){ l.push(id); localStorage.setItem(STORE_KEY,JSON.stringify(l)); } }catch(e){} }
+
+/* ---------- view control ---------- */
+function showView(name){
+  ['start','game','end'].forEach(v=>{ $('#view-'+v).hidden = (v!==name); });
+  window.scrollTo(0,0);
+}
+
+/* ---------- หน้าเริ่ม ---------- */
+const nameIn = $('#in-name'), startBtn = $('#btn-start');
+nameIn.addEventListener('input',()=>{ startBtn.disabled = nameIn.value.trim().length===0; });
+nameIn.addEventListener('keydown',e=>{ if(e.key==='Enter' && !startBtn.disabled) startGame(); });
+startBtn.addEventListener('click',startGame);
+
+function checked(name){ const el=document.querySelector('input[name="'+name+'"]:checked'); return el?el.value:''; }
+
+function startGame(){
+  state = freshState();
+  state.name = nameIn.value.trim();
+  const voice = checked('voice');
+  if(voice==='m'){ state.me='ผม'; state.kp='ครับ'; }
+  else if(voice==='f'){ state.me='หนู'; state.kp='ค่ะ'; }
+  else { state.me='เรา'; state.kp=''; }
+  const money = checked('money');
+  state.stats.m = money==='tight'?35 : money==='rich'?80 : 60;
+  state.money0 = state.stats.m;
+  const tol = checked('tol');
+  if(tol==='strong'){ state.flags.add('cocky'); state.stats.c += 8; }
+  if(tol==='rare'){ state.flags.add('rare'); }
+  state.start = Object.assign({},state.stats);
+
+  buildHud();
+  $('#hud-name').textContent = 'เรื่องของ '+state.name;
+  $('#track-fill').style.width = '0%';
+  showView('game');
+  requestAnimationFrame(()=>{ updateHud(); showScene('party'); });
+}
+
+/* ---------- HUD ---------- */
+function statRow(k,opts){
+  opts = opts||{};
+  return '<div class="stat" data-stat="'+k+'">'+
+    '<div class="stat-top"><span class="stat-name"><span aria-hidden="true">'+STATS[k].emoji+'</span> <span class="lbl">'+STATS[k].label+'</span></span>'+
+    '<span class="stat-val" data-val="'+k+'">0</span></div>'+
+    '<div class="tube" role="progressbar" aria-label="'+STATS[k].label+'" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="tube-fill"></div></div></div>';
+}
+function buildHud(){
+  $('#hud-stats').innerHTML = Object.keys(STATS).map(k=>statRow(k)).join('');
+}
+function updateHud(){
+  Object.keys(STATS).forEach(k=>{
+    const row = $('#hud-stats [data-stat="'+k+'"]'); if(!row) return;
+    const v = state.stats[k];
+    row.querySelector('.tube-fill').style.width = v+'%';
+    row.querySelector('[data-val]').textContent = v;
+    row.querySelector('.tube').setAttribute('aria-valuenow',v);
+  });
+}
+
+/* ---------- ฉาก ---------- */
+function showScene(key){
+  state.scene = key;
+  const sc = SCENES[key];
+  $('#main').style.setProperty('--mood','var('+val(sc.mood)+')');
+  $('#stage-art').textContent = val(sc.art);
+  $('#stage-place').textContent = fmt(val(sc.place));
+  $('#stage-where').textContent = val(sc.where);
+  $('#chip-day').textContent = val(sc.day);
+  $('#chip-time').textContent = val(sc.time);
+  $('#track-fill').style.width = (sc.step/TOTAL_STEPS*100)+'%';
+
+  $('#story').innerHTML = sc.body().map(it=>{
+    if(it.k==='n') return '<p class="narr">'+esc(fmt(it.t))+'</p>';
+    const w = WHO[it.who];
+    return '<div class="say" style="--who:var('+w.c+')"><span class="who">'+esc(w.name)+' <small>'+esc(w.role)+'</small></span><p>'+esc(fmt(it.t))+'</p></div>';
+  }).join('');
+
+  const list = sc.choices();
+  const box = $('#actions');
+  box.innerHTML = '<h3 class="ask">คุณจะทำอย่างไร</h3><div class="choices">'+
+    list.map((c,i)=>'<button class="choice" data-i="'+i+'">'+esc(fmt(c.label))+'</button>').join('')+'</div>';
+  box.querySelectorAll('.choice').forEach(btn=>{
+    btn.addEventListener('click',()=>choose(sc,key,list[+btn.dataset.i]));
+  });
+
+  window.scrollTo(0,0);
+  const p = $('#stage-place'); if(p) p.focus({preventScroll:true});
+}
+
+function applyFx(fx){
+  const d={h:0,b:0,m:0,c:0};
+  Object.keys(fx||{}).forEach(k=>{
+    const before=state.stats[k];
+    const after=Math.max(0,Math.min(100,before+fx[k]));
+    state.stats[k]=after; d[k]=after-before;
+  });
+  return d;
+}
+
+function choose(sc,key,c){
+  const box = $('#actions');
+  box.querySelectorAll('.choice').forEach(b=>{ b.disabled=true; });
+  (c.set||[]).forEach(f=>state.flags.add(f));
+  if(c.tag) state.tags[c.tag]++;
+  state.drinks += (c.drinks||0);
+  state.decisions++;
+  const d = applyFx(c.fx);
+  state.history.push({title:sc.title,day:val(sc.day),time:val(sc.time),label:fmt(c.label),tag:c.tag});
+  updateHud();
+
+  const text = typeof c.result==='function' ? c.result(state) : c.result;
+  const nx = c.next;
+  const last = nx==='END';
+  const chips = Object.keys(STATS).filter(k=>d[k]!==0).map(k=>{
+    const up = d[k]>0;
+    return '<span class="delta '+(up?'gain':'loss')+'"><span aria-hidden="true">'+STATS[k].emoji+'</span> '+STATS[k].label+' <b>'+(up?'▲ +':'▼ −')+Math.abs(d[k])+'</b></span>';
+  }).join('');
+
+  box.innerHTML = '<div class="result" id="result">'+
+    '<p class="picked">คุณเลือก: '+esc(fmt(c.label))+'</p>'+
+    '<p class="result-text">'+esc(fmt(text))+'</p>'+
+    (chips?'<div class="chips">'+chips+'</div>':'')+
+    '<button class="btn primary" id="btn-next">'+(last?'ดูตอนจบ':'ไปต่อ')+'</button></div>';
+  $('#btn-next').addEventListener('click',()=>{ last?showEnding():showScene(nx); });
+  const r = $('#result');
+  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  r.scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'});
+  $('#btn-next').focus({preventScroll:true});
+}
+
+/* ---------- ตอนจบ ---------- */
+function pickEnding(){
+  const t=state.tags, order=['assert','care','follow','dodge'];
+  let best=order[0];
+  order.forEach(k=>{ if(t[k]>t[best]) best=k; });
+  if(best==='assert') return state.stats.b>=50 ? 'assertGood' : 'assertLone';
+  return best;
+}
+
+function showEnding(){
+  const id = pickEnding();
+  const e = ENDINGS[id];
+  markSeen(id);
+  const seen = new Set(seenList().concat([id]));
+  const n = state.history.length;
+  const t = state.tags;
+
+  const breakdown = Object.keys(TAGS).map(k=>{
+    const pct = n? Math.round(t[k]/n*100) : 0;
+    return '<div><div class="row-top"><span>'+TAGS[k].label+'</span><span>'+t[k]+' ครั้ง</span></div>'+
+      '<div class="mini" style="--tc:var('+TAGS[k].color+')"><i data-w="'+pct+'" style="width:0"></i></div></div>';
+  }).join('');
+
+  const finalStats = Object.keys(STATS).map(k=>{
+    const v = state.stats[k], s0 = state.start[k];
+    return '<div class="stat" data-stat="'+k+'"><div class="stat-top"><span class="stat-name"><span aria-hidden="true">'+STATS[k].emoji+'</span> '+STATS[k].label+'</span>'+
+      '<span class="stat-val">'+v+'<small>ตอนเริ่ม '+s0+'</small></span></div>'+
+      '<div class="tube" role="progressbar" aria-label="'+STATS[k].label+'" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+v+'"><div class="tube-fill" data-w="'+v+'"></div><span class="tube-mark" style="left:'+s0+'%" title="ค่าตอนเริ่ม"></span></div></div>';
+  }).join('');
+
+  const timeline = state.history.map(h=>{
+    const col = h.tag?'var('+TAGS[h.tag].color+')':'var(--dim)';
+    return '<li style="--tc:'+col+'"><span class="tl-when">'+esc(h.day)+' เวลา '+esc(h.time)+'</span>'+
+      '<span class="tl-title">'+esc(h.title)+'</span><span class="tl-pick">'+esc(h.label)+'</span></li>';
+  }).join('');
+
+  const tech = TECHNIQUES.map((x,i)=>
+    '<details'+(i===0?' open':'')+'><summary>'+esc(x.t)+'</summary><div class="body"><p>'+esc(x.p)+'</p><p class="eg">'+esc(x.eg)+'</p></div></details>').join('');
+
+  const gallery = ENDING_ORDER.map(k=>{
+    const en = ENDINGS[k];
+    return seen.has(k)
+      ? '<li><span aria-hidden="true">'+en.emoji+'</span><div><b>'+esc(en.title)+(k===id?' (ตอนจบของคุณ)':'')+'</b><span class="s">'+esc(en.short)+'</span></div></li>'
+      : '<li class="locked"><span aria-hidden="true">🔒</span><div><b>ยังไม่เจอตอนจบนี้</b><span class="s">ลองเลือกให้ต่างจากเดิมดู</span></div></li>';
+  }).join('');
+
+  const html =
+  '<div class="end-wrap">'+
+    '<header class="end-head" style="--c:var('+e.color+')">'+
+      '<div class="end-emoji" aria-hidden="true">'+e.emoji+'</div>'+
+      '<h1 class="neon end-title" style="--neon:var('+e.color+')" tabindex="-1" id="end-title">'+esc(e.title)+'</h1>'+
+    '</header>'+
+    '<p class="end-text">'+esc(fmt(e.text))+'</p>'+
+    '<div class="gc"><div class="g"><h3>สิ่งที่ได้</h3><ul>'+e.gain.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div>'+
+    '<div class="c"><h3>สิ่งที่ต้องจ่าย</h3><ul>'+e.cost.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div></div>'+
+
+    '<h2 class="sec-title">สไตล์การตัดสินใจของคุณ</h2>'+
+    '<p class="sec-sub">จาก '+n+' สถานการณ์ ไม่มีแบบไหนถูกหรือผิด แต่ละแบบมีราคาที่ต่างกัน</p>'+
+    '<div class="rows">'+breakdown+'</div>'+
+
+    '<h2 class="sec-title">ค่าสถานะตอนจบ</h2>'+
+    '<p class="sec-sub">เส้นขาวบนแท่งคือค่าตอนเริ่มเกม</p>'+
+    '<div class="rows">'+finalStats+'</div>'+
+
+    '<h2 class="sec-title">ย้อนดูเส้นทางที่คุณเลือก</h2>'+
+    '<ol class="timeline">'+timeline+'</ol>'+
+
+    '<h2 class="sec-title">เทคนิคปฏิเสธแบบไม่เสียเพื่อน</h2>'+
+    '<p class="sec-sub">เอาไปใช้ได้จริง ลองซ้อมพูดในใจไว้สักประโยค</p>'+
+    '<div class="tech">'+tech+'</div>'+
+
+    '<section class="safety"><h2>ถ้าเจอเหตุการณ์จริงเหมือนตอนดึกในเกม</h2><ul>'+SAFETY.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></section>'+
+
+    '<h2 class="sec-title">ตอนจบทั้งหมด (เจอแล้ว '+ENDING_ORDER.filter(k=>seen.has(k)).length+' จาก '+ENDING_ORDER.length+')</h2>'+
+    '<ul class="gallery">'+gallery+'</ul>'+
+
+    '<div class="end-actions"><button class="btn primary" id="btn-again">เล่นอีกรอบ</button></div>'+
+    '<p class="foot">เกมนี้เป็นสถานการณ์สมมติเพื่อการเรียนรู้ ไม่ส่งเสริมการดื่มเครื่องดื่มแอลกอฮอล์ และไม่ใช่คำแนะนำทางการแพทย์ กฎหมายไทยห้ามจำหน่ายเครื่องดื่มแอลกอฮอล์ให้ผู้ที่อายุต่ำกว่า 20 ปี</p>'+
+  '</div>';
+
+  $('#view-end').innerHTML = html;
+  showView('end');
+  $('#btn-again').addEventListener('click',()=>{ showView('start'); nameIn.focus(); });
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    document.querySelectorAll('#view-end [data-w]').forEach(el=>{ el.style.width = el.dataset.w+'%'; });
+  }));
+  const th = $('#end-title'); if(th) th.focus({preventScroll:true});
+}
+
+/* ---------- เริ่มใหม่ (กดสองครั้งเพื่อยืนยัน) ---------- */
+let restartTimer=null;
+const restartBtn = $('#btn-restart');
+restartBtn.addEventListener('click',()=>{
+  if(restartBtn.dataset.armed==='1'){
+    clearTimeout(restartTimer);
+    restartBtn.dataset.armed='0'; restartBtn.textContent='เริ่มใหม่';
+    showView('start'); nameIn.focus();
+  } else {
+    restartBtn.dataset.armed='1'; restartBtn.textContent='กดอีกครั้งเพื่อยืนยัน';
+    restartTimer=setTimeout(()=>{ restartBtn.dataset.armed='0'; restartBtn.textContent='เริ่มใหม่'; },3000);
+  }
+});
+
+nameIn.focus({preventScroll:true});
+})();
+</script>
+</body>
+</html>
